@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>modalPopUp</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        line-height: 1;
+        border: none;
+      }
+
+      body.scrollHidden {
+        overflow: hidden;
+      }
+
+      button {
+        background: none;
+      }
+
+      a {
+        text-decoration: none;
+        color: #000;
+      }
+
+      body.scroll {
+        overflow: hidden;
+      }
+
+      /* 버튼 css */
+      .ButtonBox {
+        display: flex;
+        align-items: center;
+        gap: 0 10px;
+        margin-top: 20px;
+      }
+      .ButtonBox button {
+        background: #ff0000;
+        color: #fff;
+        cursor: pointer;
+        height: 35px;
+        line-height: 35px;
+        font-weight: bold;
+        display: block;
+        width: 120px;
+      }
+
+      /* 모달 css */
+      .modalBox {
+        position: fixed;
+        padding: 20px;
+        box-sizing: border-box;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        display: none;
+        z-index: 9;
+      }
+      .modalBox.depth1 {
+        width: 600px;
+      }
+      .modalBox.depth2 {
+        width: 400px;
+      }
+      .modalBox.depth3 {
+        width: 200px;
+      }
+
+      .modalBox input {
+        padding: 5px;
+        border: 1px solid #bbb;
+        border-radius: 4px;
+        height: 35px;
+        width: 100%;
+        margin-top: 20px;
+      }
+      .modalBox textarea {
+        border: 1px solid #ccc;
+        height: 150px;
+        width: 100%;
+        margin-top: 20px;
+      }
+      .modalBox .ButtonBox {
+        justify-content: center;
+      }
+
+      .modalBox.show {
+        display: block;
+      }
+
+      /* dim */
+
+      .dim {
+        position: fixed;
+        width: 100%;
+        height: 100vh;
+        top: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+      }
+      .dim.show {
+        display: block;
+      }
+
+      .scrollUse {
+        width: 200px;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body id="body">
+    <div class="ButtonBox">
+      <button
+        type="button"
+        class="open"
+        aria-haspopup="true"
+        data-target=".depth1"
+      >
+        모달 열기
+      </button>
+      <button
+        type="button"
+        class="open"
+        aria-haspopup="true"
+        data-target=".depth1"
+      >
+        모달 열기
+      </button>
+      <button
+        type="button"
+        class="open"
+        aria-haspopup="true"
+        data-target=".depth1"
+      >
+        모달 열기
+      </button>
+    </div>
+    <div class="ButtonBox">
+      <button
+        type="button"
+        class="open"
+        aria-haspopup="true"
+        data-target=".depth2"
+      >
+        별개 모달 열기
+      </button>
+    </div>
+    <div class="ButtonBox">
+      <button
+        type="button"
+        class="open"
+        aria-haspopup="true"
+        data-target=".depth3"
+      >
+        별개 모달 열기
+      </button>
+    </div>
+
+    <!-- 모달 -->
+    <div class="modalBox depth1" aria-modal="true" role="dialog">
+      <h2>test</h2>
+      <a href="https://www.naver.com/" target="_blank">링크</a>
+      <input type="text" />
+      <textarea>모달</textarea>
+      <div class="ButtonBox">
+        <button
+          type="button"
+          class="open"
+          aria-haspopup="true"
+          data-target=".depth2"
+        >
+          모달 열기
+        </button>
+        <button
+          type="button"
+          class="close"
+          aria-haspopup="true"
+          data-target=".depth1"
+        >
+          모달 닫기
+        </button>
+      </div>
+    </div>
+
+    <div class="modalBox depth2" aria-modal="true" role="dialog">
+      <h2>test</h2>
+      <a href="https://www.naver.com/" target="_blank">링크</a>
+      <input type="text" />
+      <textarea>모달</textarea>
+      <div class="ButtonBox">
+        <button
+          type="button"
+          class="open"
+          aria-haspopup="true"
+          data-target=".depth3"
+        >
+          모달 열기
+        </button>
+        <button
+          type="button"
+          class="close"
+          aria-haspopup="true"
+          data-target=".depth2"
+        >
+          모달 닫기
+        </button>
+      </div>
+    </div>
+
+    <div class="modalBox depth3" aria-modal="true" role="dialog">
+      <h2>test</h2>
+      <a href="https://www.naver.com/" target="_blank">링크</a>
+      <input type="text" />
+      <textarea>모달</textarea>
+      <div class="ButtonBox">
+        <button
+          type="button"
+          class="close"
+          aria-haspopup="true"
+          data-target=".depth3"
+        >
+          모달 닫기
+        </button>
+      </div>
+    </div>
+
+    <div class="dim" tabindex="-1"></div>
+
+    <div class="scrollUse"></div>
+
+    <script>
+      const body = document.querySelector("body");
+      const dim = document.querySelector(".dim");
+      const modalStack = [];
+      const focusStack = [];
+
+      // 스크롤 여부
+      const scrollHidden = (isHidden) => {
+        if (isHidden) {
+          body.classList.add("scrollHidden");
+        } else {
+          body.classList.remove("scrollHidden");
+        }
+      };
+
+      // 포커스 요소 찾기
+      function focusSearch(getActualTarget) {
+        if (!getActualTarget) {
+          // firstFocusableEl과 lastFocusableEl가 null값을 가지면 return
+          return { firstFocusableEl: null, lastFocusableEl: null };
+        }
+
+        // el 포커스 가능한 요소들을 찾음
+        const focusableEls = getActualTarget.querySelectorAll(
+          "a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled])"
+        );
+
+        // focusableEls에서 첫번째 포커스 가능요소와 마지막 가능 요소 객체로 반환
+        const firstFocusableEl = focusableEls[0];
+        const lastFocusableEl = focusableEls[focusableEls.length - 1];
+
+        //객체로 묶어서 반환
+        const getReturnFocusNode = { firstFocusableEl, lastFocusableEl };
+
+        return getReturnFocusNode;
+      }
+
+      // 포커스 트랩 실행
+      function activeFocusTraps(event) {
+        // 최근에 연 모달 팝업
+        const currentModal = modalStack[modalStack.length - 1];
+
+        // focusSearch(currentModal) 함수에서 return된 firstFocusableEl, lastFocusableEl를 가져와서 담음
+        const { firstFocusableEl, lastFocusableEl } = focusSearch(currentModal);
+        const isTabEvent = event.key === "Tab";
+
+        // isTabEvent가 false면 return
+        if (!isTabEvent) {
+          return;
+        }
+
+        // 만약 포커스를 받은 요소가 lastFocus 이고 shift + Tab키를 안눌렀으면
+        const isKeyForward =
+          document.activeElement === lastFocusableEl && !event.shiftKey;
+        const isKeyBackward =
+          document.activeElement === firstFocusableEl && event.shiftKey;
+
+        if (isKeyForward) {
+          // firstFocusableEl에 포커싱
+          firstFocusableEl.focus();
+          // event 기본동작 미실행 지정
+          event.preventDefault();
+          // 그렇지 않고 만약 포커스를 받은 요소가 firstFocus 이고 shift + Tab키를 눌렀으면
+        } else if (isKeyBackward) {
+          // lastFocusableEl에 포커싱
+          lastFocusableEl.focus();
+          // event 기본동작 미실행 지정
+          event.preventDefault();
+        }
+      }
+
+      // 모달 열렸을때
+      function activeModal(modals) {
+        // 모달 오픈 시 해당 버튼 포커스 지정
+        const commandFocus = document.activeElement;
+
+        // focusing 저장
+        if (!!commandFocus) {
+          focusStack.push(commandFocus);
+        }
+
+        modals.classList.add("show");
+        dim.classList.add("show");
+        scrollHidden(true);
+
+        // 모달 스택 저장(빈 modalStack에 Modal을 배열 끝 요소로 추가)
+        modalStack.push(modals);
+
+        // 모달이 열렸을때 포커싱 가능한 첫번째 요소로 이동
+        // focusSearch(Modal)에 객체 firstFocusableEl를 변수 지정
+        const { firstFocusableEl } = focusSearch(modals);
+        // 만약 firstFocusableEl가 true면
+        if (!!firstFocusableEl) {
+          // firstFocusableEl에 포커싱
+          firstFocusableEl.focus();
+        }
+
+        // 전역으로 지정하면 모달이 닫혀있을때도 modalFocusTrap이 발생될수 있으므로 모달이 열릴때에만 지정
+        document.addEventListener("keydown", activeFocusTraps);
+      }
+
+      // 모달 열기
+      function openModal() {
+        const openButtons = document.querySelectorAll(".open");
+        openButtons.forEach((openButton) => {
+          openButton.addEventListener("click", () => {
+            const buttonDataset = document.querySelector(
+              // openButton에 data-target된 요소들을 buttonDatasets 지정
+              openButton.dataset.target
+            );
+            activeModal(buttonDataset);
+          });
+        });
+      }
+      openModal();
+
+      // 모달 닫혔을때
+      function deactivateModal(modals) {
+        // 현재 열린 모달이 마지막 모달이면 zindex : 1000으로
+        if (!modalStack[modalStack.length - 1] === modals) {
+          return;
+        }
+        modals.classList.remove("show");
+
+        // 모달 스택 제거
+        modalStack.pop();
+
+        // focusStack 저장된 focusStack 복원
+        const focusStackLoad = focusStack.pop();
+        focusStackLoad.focus();
+      }
+
+      // 모달 닫기
+      function closeModal() {
+        const closeButtons = document.querySelectorAll(".close");
+        closeButtons.forEach((closeButton) => {
+          closeButton.addEventListener("click", () => {
+            const buttonDataset = document.querySelector(
+              // closeButton에 data-target된 요소들을 buttonDatasets 지정
+              closeButton.dataset.target
+            );
+            deactivateModal(buttonDataset);
+            lastModal();
+          });
+        });
+      }
+      closeModal();
+
+      // 열린 모달 순차적으로 닫는 함수
+      function stackClose() {
+        // 최근 모달을 TopModal로 const 지정
+        const latestModal = modalStack[modalStack.length - 1];
+        // 만약 TopModal이 true면
+        if (!!latestModal) {
+          // TopModal을 closeEvent
+          deactivateModal(latestModal);
+        }
+      }
+
+      // 열린 모달이 없을 때 함수
+      function lastModal() {
+        if (modalStack.length === 0) {
+          dim.classList.remove("show");
+          scrollHidden(false);
+        }
+      }
+
+      // 모달 외 클릭시 닫기
+      document.addEventListener("pointerup", (event) => {
+        // pointerup(마우스를 터치/클릭 후 뗐을때부터) 했을 시 HTML까지 찾아 올라가면서 modalBox.show를 찾아 modalWrap라는 const로 지정
+        const showModalBoxes = event.target.closest(".modalBox.show");
+
+        // 모달 내부 클릭시  return
+        if (!!showModalBoxes) {
+          return;
+        }
+
+        stackClose();
+        lastModal();
+      });
+
+      // esc 클릭시 닫기
+      document.addEventListener("keydown", (event) => {
+        const isEscKey = event.key === "Escape";
+
+        // esc키를 안눌렀을 경우 return
+        if (!isEscKey) {
+          return;
+        }
+
+        stackClose();
+        lastModal();
+      });
+    </script>
+  </body>
+</html>

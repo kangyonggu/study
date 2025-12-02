@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tab</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        border: none;
+      }
+      ul {
+        list-style-type: none;
+      }
+      .tabBox {
+        width: 200px;
+        margin: 0 auto;
+      }
+      .tabBox .tabNav ul {
+        display: flex;
+      }
+      .tabBox .tabNav ul li {
+        border: 1px solid #ccc;
+        border-bottom: none;
+        height: 40px;
+        line-height: 40px;
+        flex: 1;
+        border-right: none;
+      }
+
+      .tabBox .tabNav ul li:last-child {
+        border-right: 1px solid #ccc;
+      }
+
+      .tabBox .tabNav ul li button {
+        display: block;
+        height: 100%;
+        width: 100%;
+        background: inherit;
+        cursor: pointer;
+      }
+
+      .tabBox .tabNav ul li.on {
+        background: #456c54;
+      }
+
+      .tabBox .tabNav ul li.on button {
+        color: #fff;
+        font-weight: bold;
+      }
+
+      .tabBox .tabContents {
+        border: 1px solid #ddd;
+      }
+
+      .tabBox .tabContent {
+        display: none;
+        padding: 20px;
+      }
+      .tabBox .tabContent.on {
+        display: block;
+      }
+
+      .tabBox form input {
+        width: 100%;
+        height: 35px;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      .tabBox form button {
+        width: 100%;
+        height: 35px;
+        text-align: center;
+        line-height: 35px;
+        margin-top: 15px;
+        cursor: pointer;
+      }
+
+      img {
+        max-width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tabBox">
+      <div class="tabNav">
+        <ul>
+          <li class="tabButton on">
+            <button type="button" class="button">Tab1</button>
+          </li>
+          <li class="tabButton">
+            <button type="button" class="button">Tab2</button>
+          </li>
+          <li class="tabButton">
+            <button type="button" class="button">Tab3</button>
+          </li>
+          <li class="tabButton">
+            <button type="button" class="button">Tab4</button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="tabContents">
+        <div class="tabContent on">
+          Contrary to popular belief, Lorem Ipsum is not simply random text. It
+          has roots in a piece of classical Latin literature from 45 BC, making
+          it over 2000 years old. Richard McClintock,
+        </div>
+        <div class="tabContent">
+          <div class="img"><img src="image/pikachu.jpg" alt="피카츄" /></div>
+        </div>
+        <div class="tabContent">
+          <form action="" method="" class="form">
+            <label for="name"></label>
+            <input type="text" id="name" name="name" />
+            <button type="submit">전송</button>
+          </form>
+        </div>
+        <div class="tabContent">tab4</div>
+      </div>
+    </div>
+
+    <script>
+      const tabBox = document.querySelector(".tabBox");
+      const tabButtons = tabBox.querySelectorAll(".tabNav .tabButton");
+      const tabContents = tabBox.querySelectorAll(".tabContents .tabContent");
+
+      tabButtons.forEach((tabButton, idx) => {
+        tabButton.addEventListener("click", () => {
+          tabButtons.forEach((item) => {
+            item.classList.remove("on");
+          });
+
+          tabContents.forEach((tabContent) => {
+            tabContent.classList.remove("on");
+          });
+
+          tabButtons[idx].classList.add("on");
+          tabContents[idx].classList.add("on");
+        });
+      });
+    </script>
+  </body>
+</html>
