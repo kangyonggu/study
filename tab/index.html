@@ -126,19 +126,23 @@
     </div>
 
     <script>
-      const tabBox = document.querySelector(".tabBox");
-      const tabButtons = tabBox.querySelectorAll(".tabNav .tabButton");
-      const tabContents = tabBox.querySelectorAll(".tabContents .tabContent");
+      const tabButtons = document.querySelectorAll(".tabNav .tabButton");
+      const tabContents = document.querySelectorAll(".tabContents .tabContent");
 
       tabButtons.forEach((tabButton, idx) => {
         tabButton.addEventListener("click", () => {
-          tabButtons.forEach((item) => {
-            item.classList.remove("on");
-          });
+          const currentButton = document.querySelector(".tabNav .tabButton.on");
+          const currentContent = document.querySelector(
+            ".tabContents .tabContent.on"
+          );
 
-          tabContents.forEach((tabContent) => {
-            tabContent.classList.remove("on");
-          });
+          if (!!currentButton) {
+            currentButton.classList.remove("on");
+          }
+
+          if (!!currentContent) {
+            currentContent.classList.remove("on");
+          }
 
           tabButtons[idx].classList.add("on");
           tabContents[idx].classList.add("on");
