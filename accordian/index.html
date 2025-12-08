@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>아코디언</title>
+
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        border: none;
+        line-height: 1;
+        box-sizing: border-box;
+      }
+
+      .accordion {
+        width: 400px;
+        margin: 60px auto;
+        border: 1px solid #ccc;
+      }
+      .accordion .accordionBox .accordionMenu {
+        padding: 20px;
+        border-bottom: 1px solid #ccc;
+        cursor: pointer;
+      }
+      .accordion .accordionBox .accordionContent {
+        font-size: 0;
+        min-height: 0;
+        transition: all 0.3s linear;
+      }
+      .accordion .accordionBox .accordionContent.active {
+        min-height: 100px;
+        font-size: 16px;
+        border-bottom: 1px solid #ccc;
+        padding: 20px;
+      }
+      .accordion .accordionBox:last-child > * {
+        border-bottom: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="accordion">
+      <div class="accordionBox">
+        <div class="accordionMenu">메뉴1</div>
+        <div class="accordionContent">보기1</div>
+      </div>
+      <div class="accordionBox">
+        <div class="accordionMenu">메뉴2</div>
+        <div class="accordionContent">보기2</div>
+      </div>
+      <div class="accordionBox">
+        <div class="accordionMenu">메뉴3</div>
+        <div class="accordionContent">보기3</div>
+      </div>
+    </div>
+
+    <script>
+      const accordion = document.querySelector(".accordion");
+      const accordionBoxes = accordion.querySelectorAll(".accordionBox");
+
+      accordionBoxes.forEach((accordionBox, index) => {
+        // accordionBox값 각각에 accordionMenu 변수 지정
+        const accordionMenu = accordionBox.querySelector(".accordionMenu");
+        const accordionContent =
+          accordionBox.querySelector(".accordionContent");
+
+        accordionMenu.addEventListener("click", () => {
+          // accordionContent에 acitve가 있을 경우를 변수 지정
+          const isActiveContent = accordionContent.classList.contains("active");
+          accordionBoxes.forEach((accordionBox) => {
+            // accordionBoxes 안에서 해당 accordionContent만 따로 변수 지정
+            const activeContent =
+              accordionBox.querySelector(".accordionContent");
+            activeContent.classList.remove("active");
+          });
+
+          // isActiveContent 되있으면 acitive를 제거
+          if (!isActiveContent) {
+            accordionContent.classList.add("active");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
