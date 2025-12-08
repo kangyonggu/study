@@ -57,28 +57,18 @@
     </div>
 
     <script>
-      const accordion = document.querySelector(".accordion");
-      const accordionBoxes = accordion.querySelectorAll(".accordionBox");
+      const accordionMenues = document.querySelectorAll(".accordionMenu");
+      const accordionCotents = document.querySelectorAll(".accordionContent");
 
-      accordionBoxes.forEach((accordionBox, index) => {
-        // accordionBox값 각각에 accordionMenu 변수 지정
-        const accordionMenu = accordionBox.querySelector(".accordionMenu");
-        const accordionContent =
-          accordionBox.querySelector(".accordionContent");
-
+      accordionMenues.forEach((accordionMenu, idx) => {
         accordionMenu.addEventListener("click", () => {
-          // accordionContent에 acitve가 있을 경우를 변수 지정
-          const isActiveContent = accordionContent.classList.contains("active");
-          accordionBoxes.forEach((accordionBox) => {
-            // accordionBoxes 안에서 해당 accordionContent만 따로 변수 지정
-            const activeContent =
-              accordionBox.querySelector(".accordionContent");
-            activeContent.classList.remove("active");
-          });
+          const currentContent = document.querySelector(
+            ".accordionContent.active"
+          );
+          accordionCotents[idx].classList.add("active");
 
-          // isActiveContent 되있으면 acitive를 제거
-          if (!isActiveContent) {
-            accordionContent.classList.add("active");
+          if (!!currentContent) {
+            currentContent.classList.remove("active");
           }
         });
       });
